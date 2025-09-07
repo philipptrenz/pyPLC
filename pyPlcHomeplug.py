@@ -32,7 +32,7 @@
 # 8. The tpLink has software from 2017, maybe the SLAC was removed at this version.
 # 9. Article regarding firmware- and configuration update: https://fitzcarraldoblog.wordpress.com/2020/07/22/updating-the-powerline-adapters-in-my-home-network/
 
-
+import pcap_ct_abi_fix as abi   # must be first
 import pcap
 import pyPlcIpv6
 import udplog
@@ -1278,7 +1278,8 @@ class pyPlcHomeplug():
     def mainfunction(self):
         # https://stackoverflow.com/questions/31305712/how-do-i-make-libpcap-pcap-loop-non-blocking
         # Tell the sniffer to give max 100 received packets to the callback function:
-        self.sniffer.dispatch(100, self.receiveCallback, None)
+        # self.sniffer.dispatch(100, self.receiveCallback, None)
+        abi.safe_dispatch(self.sniffer, 100, self.receiveCallback, None)
         self.showStatus("nPacketsReceived=" + str(self.nPacketsReceived))
         if (self.iAmPev==1):
             self.modemFinder_Mainfunction() # run the modem finder cyclic function

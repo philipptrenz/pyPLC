@@ -1,13 +1,20 @@
 
-# test 
+# test
 
+from pathlib import Path
+import sys
+
+# add repo root (parent of tests/) to import path
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+import pcap_ct_abi_fix as abi    # must be before: import pcap
 import pcap
 import time
 
 
- 
-class tester():    
-            
+
+class tester():
+
     def findEthernetAdaptor(self):
         self.strInterfaceName="eth0" # default, if the real is not found
         print("Interfaces:\n" + '\n'.join(pcap.findalldevs()))
@@ -17,7 +24,7 @@ class tester():
                 print("This is the wanted Ethernet adaptor.")
                 self.strInterfaceName="eth"+str(i)
             print("eth"+ str(i) + " is " + strInterfaceName)
-            
+
 
     def __init__(self):
         self.nPacketsReceived = 0
@@ -40,8 +47,8 @@ class tester():
         self.sniffer = pcap.pcap(name=self.strInterfaceName, promisc=True, immediate=True, timeout_ms=10)
         self.sniffer.setnonblock(True)
         print("sniffer created at " + self.strInterfaceName)
-        
-    def mainfunction(self):  
+
+    def mainfunction(self):
         # print("will evaluate self.sniffer")
         for ts, pkt in self.sniffer: # attention: for using this in non-blocking manner, we need the patch described above.
             self.nPacketsReceived+=1
@@ -50,11 +57,12 @@ class tester():
     def callbackfunction(self, timestamp, pkt, *args):
         self.nPacketsReceived+=1
         #print("The callback #" + str(self.nPacketsReceived) + " " + str(len(pkt)) + " bytes:" + '%d' % (timestamp)) # the time stamp
-        
+
     def mainfunction_new(self):
         # https://stackoverflow.com/questions/31305712/how-do-i-make-libpcap-pcap-loop-non-blocking
         # Tell the sniffer to give max 100 received packets to the callback function:
-        self.sniffer.dispatch(100, self.callbackfunction, None)
+        # self.sniffer.dispatch(100, self.callbackfunction, None)
+        abi.safe_dispatch(self.sniffer, 100, self.callbackfunction, None)
 
     def close(self):
         self.sniffer.close()

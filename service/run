@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "*** starting pyPLC ***"
+
+until netstat -an | grep 0.0.0.0:1883.*LISTEN > /dev/null; do
+    echo "waiting for MQTT broker to start ..."
+    sleep 1
+done
+
+cd /data/pyPLC
+
+exec 2>&1
+exec /usr/bin/python3 evseNoGui.py

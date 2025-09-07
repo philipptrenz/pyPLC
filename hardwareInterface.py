@@ -290,11 +290,11 @@ class hardwareInterface():
             GPIO.setup(PinCp, GPIO.OUT) #output for CP
 
         if (getConfigValue("digital_output_device") == "mqtt"):
-        	self.mqttclient = mqtt.Client(client_id="pyplc")
-        	self.mqttclient.on_connect = self.mqtt_on_connect
-        	self.mqttclient.on_disconnect = self.mqtt_on_disconnect
-        	self.mqttclient.on_message = self.mqtt_on_message
-        	self.mqttclient.connect(getConfigValue("mqtt_broker"), 1883, 60)
+            self.mqttclient = mqtt.Client(client_id="pyplc")
+            self.mqttclient.on_connect = self.mqtt_on_connect
+            self.mqttclient.on_disconnect = self.mqtt_on_disconnect
+            self.mqttclient.on_message = self.mqtt_on_message
+            self.mqttclient.connect(getConfigValue("mqtt_broker"), 1883, 60)
 
     def __init__(self, callbackAddToTrace=None, callbackShowStatus=None, homeplughandler=None, mode=C_EVSE_MODE):
         self.callbackAddToTrace = callbackAddToTrace

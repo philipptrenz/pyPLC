@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 from configmodule import getConfigValue, getConfigValueBool
 
-def mqtt_on_connect(client, userdata, flags, rc):
+def mqtt_on_connect(client, userdata, flags, rc, properties=None):
     client.subscribe(getConfigValue("mqtt_topic") + "/#")
 
 def mqtt_on_message(client, userdata, msg):
@@ -18,7 +18,7 @@ def mqtt_on_message(client, userdata, msg):
         client.publish(getConfigValue("mqtt_topic") + "/target_current", msg.payload)
 
 simulatedInletVoltage = 0
-mqttclient = mqtt.Client()
+mqttclient = mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
 mqttclient.on_connect = mqtt_on_connect
 mqttclient.on_message = mqtt_on_message
 mqttclient.connect(getConfigValue("mqtt_broker"), 1883, 60)

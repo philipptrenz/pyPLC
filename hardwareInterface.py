@@ -290,7 +290,7 @@ class hardwareInterface():
             GPIO.setup(PinCp, GPIO.OUT) #output for CP
 
         if (getConfigValue("digital_output_device") == "mqtt"):
-            self.mqttclient = mqtt.Client(client_id="pyplc")
+            self.mqttclient = mqtt.Client(client_id="pyplc", callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
             self.mqttclient.on_connect = self.mqtt_on_connect
             self.mqttclient.on_disconnect = self.mqtt_on_disconnect
             self.mqttclient.on_message = self.mqtt_on_message
@@ -545,12 +545,12 @@ class hardwareInterface():
     def mainfunction_mqtt(self):
         self.mqttclient.loop(timeout=0.1)
 
-    def mqtt_on_disconnect(self, client, userdata, rc):
+    def mqtt_on_disconnect(self, client, userdata, flags, rc, properties=None):
         self.addToTrace(f"MQTT disconnected with result code {rc}")
         self.mqttclient.connect(getConfigValue("mqtt_broker"), 1883, 60)
 
 	# The callback for when the client receives a CONNACK response from the server.
-    def mqtt_on_connect(self, client, userdata, flags, rc):
+    def mqtt_on_connect(self, client, userdata, flags, rc, properties=None):
         self.addToTrace(f"MQTT connected with result code {rc}")
 
         # Subscribing in on_connect() means that if we lose the connection and
